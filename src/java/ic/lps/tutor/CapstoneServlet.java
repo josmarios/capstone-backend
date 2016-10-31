@@ -55,7 +55,7 @@ public class CapstoneServlet extends HttpServlet {
         String csvHeader = "gender, age, testType, pretest, activity, posttest\n";
         String csvLine = json.getString("gender") + "," + json.getString("age") + "," + json.getString("testType") + "," + json.getInt("pretestPoints") + "," + json.getInt("activityPoints") + "," + json.getInt("posttestPoints")+"\n";
 
-        File output = new File("/home/josmario/responses.csv");
+        File output = new File("/home/responses.csv");
 
         if (output.exists()) {
             FileWriter fw = new FileWriter(output, true);
