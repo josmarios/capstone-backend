@@ -36,26 +36,34 @@ public class CapstoneServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        response.setContentType("text/html;charset=UTF-8");
-//        try (PrintWriter out = response.getWriter()) {
-//            /* TODO output your page here. You may use following sample code. */
-//            out.println("<!DOCTYPE html>");
-//            out.println("<html>");
-//            out.println("<head>");
-//            out.println("<title>Servlet CapstoneServlet</title>");            
-//            out.println("</head>");
-//            out.println("<body>");
-//            out.println("<h1>Servlet CapstoneServlet at " + request.getContextPath() + "</h1>");
-//            out.println("</body>");
-//            out.println("</html>");
-//        }
 
+        try (PrintWriter out = response.getWriter()) {
+
+            response.setContentType("text/html");
+            response.setHeader("Cache-control", "no-cache, no-store");
+            response.setHeader("Pragma", "no-cache");
+            response.setHeader("Expires", "-1");
+
+            String clientOrigin = request.getHeader("origin");
+            response.setHeader("Access-Control-Allow-Origin", clientOrigin);
+            response.setHeader("Access-Control-Allow-Methods", "POST");
+            response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+            response.setHeader("Access-Control-Max-Age", "86400");
+
+            JSONObject resp = new JSONObject();
+            resp.append("success", true);
+            out.println(resp.toString());
+            
+            out.close();
+        }
         JSONObject json = new JSONObject(request.getReader().readLine());
 
-        String csvHeader = "gender, age, testType, pretest, activity, posttest\n";
-        String csvLine = json.getString("gender") + "," + json.getString("age") + "," + json.getString("testType") + "," + json.getInt("pretestPoints") + "," + json.getInt("activityPoints") + "," + json.getInt("posttestPoints")+"\n";
+        String csvHeader = "startTime, endTime, gender, age, testType, pretest, activity, posttest, pre, post\n";
+        String csvLine = json.getLong("startTime") + "," + json.getLong("endTime") + "," + json.getString("gender") + "," + json.getString("age") + "," + json.getString("testType") + "," + json.getInt("pretestPoints") + "," + json.getInt("activityPoints") + "," + json.getInt("posttestPoints") + "," + json.getJSONArray("pre").toString() + "," + json.getJSONArray("post").toString() + "\n";
 
-        File output = new File("/home/responses.csv");
+        File output = new File("responses.csv");
+
+        System.out.println("---------> Path: " + output.getAbsolutePath());
 
         if (output.exists()) {
             FileWriter fw = new FileWriter(output, true);
